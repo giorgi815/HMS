@@ -1,5 +1,4 @@
-﻿
-using HMS.Application.Models.Common;
+﻿using HMS.Application.Models.Common;
 using HMS.Application.Models.Hotel;
 
 namespace HMS.Application.Contracts.Services

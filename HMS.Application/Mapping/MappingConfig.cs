@@ -1,5 +1,5 @@
-﻿
-using HMS.Application.Models.Hotel;
+﻿using HMS.Application.Models.Hotel;
+using HMS.Application.Models.Room;
 using HMS.Domain.Entities;
 using Mapster;
 
@@ -18,6 +18,14 @@ namespace HMS.Application.Mapping
                 .Map(dest => dest.Address, src => src.Address);
             config.NewConfig<HotelForCreatingDto, Hotel>();
             config.NewConfig<HotelForUpdatingDto, Hotel>();
+
+
+            config.NewConfig<Room, RoomForGettingDto>()
+                .Map(dest => dest.RoomId, src => src.RoomId)
+                .Map(dest => dest.Name, src => src.Name)
+                .Map(dest => dest.Price, src => src.Price);
+            config.NewConfig<RoomForCreatingDto, Room>();
+            config.NewConfig<RoomForUpdatingDto, Room>();
         }
     }
 }

@@ -74,6 +74,9 @@ namespace HMS.Application.Services
             if(hotel is null)
                 throw new NotFoundException($"Hotel with Id {hotelId} not found.");
 
+            if(hotel.Rooms.Any())
+                throw new BadRequestException($"Hotel with Id {hotelId} cannot be deleted because it has associated rooms.");
+
             hotelRepository.Remove(hotel);
             await hotelRepository.SaveAsync();
 

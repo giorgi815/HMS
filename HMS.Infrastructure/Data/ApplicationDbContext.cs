@@ -1,10 +1,11 @@
-﻿
-using HMS.Domain.Entities;
+﻿using HMS.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMS.Infrastructure.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -16,7 +17,8 @@ namespace HMS.Infrastructure.Data
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<Manager> Managers { get; set; }
         public DbSet<ReservationRoom> ReservationRooms { get; set; }
-
+        public DbSet<Admin> Admins { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,7 +62,6 @@ namespace HMS.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
         }
-
-
+        
     }
 }

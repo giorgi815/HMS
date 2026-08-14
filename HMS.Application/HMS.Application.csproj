@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Mapster" Version="10.0.11" />
     <PackageReference Include="Mapster.DependencyInjection" Version="10.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
       <PrivateAssets>all</PrivateAssets>
@@ -24,6 +25,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HMS.Domain\HMS.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Manager\" />
   </ItemGroup>
 
 </Project>

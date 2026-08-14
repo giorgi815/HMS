@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace HMS.Application.Services
 {
-    public class RoomService(IRoomRepository roomRepository, IMapper mapper) : IRoomService
+    public class RoomService(IRoomRepository roomRepository, IHotelRepository hotelRepository, IMapper mapper) : IRoomService
     {
         public async Task<PagedResponseDto<RoomForGettingDto>> GetAllRoomsAsync(PagedRequestDto parameters)
         {
@@ -22,8 +22,6 @@ namespace HMS.Application.Services
 
             return MapToPagedResponseDto(rooms, parameters);
         }
-
-        
 
         public async Task<RoomForGettingDto> GetRoomByIdAsync(int roomId)
         {
@@ -38,10 +36,38 @@ namespace HMS.Application.Services
             return mapper.Map<RoomForGettingDto>(room);
 
         }
+
+        public async Task<PagedResponseDto<RoomForGettingDto>> SearchAvailableRoomsAsync(RoomSearchRequestDto parameters)
+        {
+            Expression<Func<Room, bool>> filter = r => 
+            (!parameters.MinPrice.HasValue || r.Price >= parameters.MinPrice) &&
+            (!parameters.MaxPrice.HasValue || r.Price <= parameters.MaxPrice) &&
+            (!parameters.CheckInDate.HasValue || !parameters.CheckOutDate.HasValue ||
+                !r.ReservationRooms.Any(rr =>
+                    rr.Reservation.CheckInDate < parameters.CheckOutDate &&
+                    rr.Reservation.CheckOutDate > parameters.CheckInDate));
+
+            var rooms = await roomRepository.GetAllAsync(
+                filter: filter,
+                orderBy: BuildOrderBy(parameters.SortBy),
+                ascending: parameters.Ascending,
+                pageNumber: parameters.PageNumber,
+                pageSize: parameters.PageSize
+            );
+
+            return MapToPagedResponseDto(rooms, parameters);
+        }   
+
         public async Task<int> CreateRoomAsync(RoomForCreatingDto model)
         {
             if (model is null)
                 throw new BadRequestException("Room model is required");
+
+
+            var hotel = await hotelRepository.GetAsync(h => h.HotelId == model.HotelId);
+
+            if(hotel is null)
+                throw new NotFoundException($"Hotel with Id {model.HotelId} not found");
 
             //if room is preserved same room cant be preserved again
             var existingRoom = await roomRepository.GetAsync(r => r.Name == model.Name);
@@ -122,5 +148,7 @@ namespace HMS.Application.Services
 
 
         }
+
+
     }
 }

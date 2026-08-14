@@ -12,5 +12,7 @@ namespace HMS.Application.Models.Room
         [Range(100, 100000, ErrorMessage = "Room number must be between 100 and 100000.")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
+
+        public int HotelId { get; set; }
     }
 }

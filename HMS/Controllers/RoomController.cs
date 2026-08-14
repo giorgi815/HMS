@@ -40,6 +40,20 @@ namespace HMS.Controllers
             return StatusCode(response.HttpStatusCode, response);
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchAvailableRooms([FromQuery] RoomSearchRequestDto parameters)
+        {
+            var result = await roomService.SearchAvailableRoomsAsync(parameters);
+            var response = new CommonResponse()
+            {
+                Message = "Available rooms retrieved successfully",
+                Result = result,
+                IsSuccess = true,
+                HttpStatusCode = Convert.ToInt32(HttpStatusCode.OK)
+            };
+            return StatusCode(response.HttpStatusCode, response);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateRoom([FromBody] RoomForCreatingDto model)
         {

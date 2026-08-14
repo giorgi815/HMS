@@ -1,4 +1,5 @@
-﻿using HMS.Application.Models.Hotel;
+﻿using HMS.Application.Models.Auth;
+using HMS.Application.Models.Hotel;
 using HMS.Application.Models.Room;
 using HMS.Domain.Entities;
 using Mapster;
@@ -26,6 +27,14 @@ namespace HMS.Application.Mapping
                 .Map(dest => dest.Price, src => src.Price);
             config.NewConfig<RoomForCreatingDto, Room>();
             config.NewConfig<RoomForUpdatingDto, Room>();
+
+
+            config.NewConfig<AdminRegistrationRequestDto, ApplicationUser>()
+                .Map(dest => dest.UserName, src => src.Email)
+                .Map(dest => dest.NormalizedUserName, src => src.Email.ToUpper())
+                .Map(dest => dest.NormalizedEmail, src => src.Email.ToUpper())
+                .Map(dest => dest.Email, src => src.Email);
+
         }
     }
 }

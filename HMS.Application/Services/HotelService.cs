@@ -25,8 +25,8 @@ namespace HMS.Application.Services
 
         public async Task<HotelForGettingDto> GetHotelByIdAsync(int hotelId)
         {
-            if(hotelId == null)
-                throw new BadRequestException("Hotel Id cannot be null.");
+            if (hotelId <= 0)
+                throw new BadRequestException("Hotel Id is required and must be greater than zero.");
 
             var hotel = await hotelRepository.GetAsync(h => h.HotelId == hotelId);
 
@@ -66,8 +66,8 @@ namespace HMS.Application.Services
 
         public async Task DeleteHotelAsync(int hotelId)
         {
-            if(hotelId == null)
-                throw new BadRequestException("Hotel Id cannot be null.");
+            if (hotelId <= 0)
+                throw new BadRequestException("Hotel Id is required and must be greater than zero.");
 
             var hotel = await hotelRepository.GetAsync(h => h.HotelId == hotelId);
 

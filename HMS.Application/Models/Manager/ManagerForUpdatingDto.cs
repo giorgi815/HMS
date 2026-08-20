@@ -1,9 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using HMS.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
-namespace HMS.Application.Models.Auth
+namespace HMS.Application.Models.Manager
 {
-    public class ManagerRegistrationRequestDto
+    public class ManagerForUpdatingDto
     {
+        [Required]
+        public int Id { get; set; }
         [Required]
         [MaxLength(50)]
         public string FirstName { get; set; }
@@ -14,15 +18,8 @@ namespace HMS.Application.Models.Auth
         [MaxLength(11)]
         public string PersonalNumber { get; set; }
         [Required]
-        [MaxLength(50)]
-        public string Email { get; set; }
-
-        [Required]
-        public string Password { get; set; }
-        [Required]
         [MaxLength(9)]
         public string PhoneNumber { get; set; }
 
-        public int HotelId { get; set; }
     }
 }

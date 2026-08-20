@@ -1,5 +1,7 @@
 ﻿using HMS.Application.Models.Auth;
+using HMS.Application.Models.Guest;
 using HMS.Application.Models.Hotel;
+using HMS.Application.Models.Manager;
 using HMS.Application.Models.Room;
 using HMS.Domain.Entities;
 using Mapster;
@@ -21,7 +23,7 @@ namespace HMS.Application.Mapping
             config.NewConfig<HotelForUpdatingDto, Hotel>();
 
 
-            config.NewConfig<Room, RoomForGettingDto>()
+            config.NewConfig<Room, RoomForGettingDto>() 
                 .Map(dest => dest.RoomId, src => src.RoomId)
                 .Map(dest => dest.Name, src => src.Name)
                 .Map(dest => dest.Price, src => src.Price);
@@ -35,6 +37,16 @@ namespace HMS.Application.Mapping
                 .Map(dest => dest.NormalizedEmail, src => src.Email.ToUpper())
                 .Map(dest => dest.Email, src => src.Email);
 
+
+            config.NewConfig<ManagerRegistrationRequestDto, Manager>();
+            config.NewConfig<Manager, ManagerForGettingDto>();
+            config.NewConfig<ManagerForUpdatingDto, Manager>();
+
+            config.NewConfig<Guest, GuestForCreatingDto>();
+            config.NewConfig<GuestForUpdatingDto, Guest>();
+            config.NewConfig<GuestRegistrationRequestDto, Guest>();
+            config.NewConfig<Guest, GuestForGettingDto>();
+            config.NewConfig<GuestForGettingDto, GuestForUpdatingDto>();
         }
     }
 }

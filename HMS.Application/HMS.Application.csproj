@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Manager\" />
+    <Folder Include="Models\NewFolder\" />
   </ItemGroup>
 
 </Project>

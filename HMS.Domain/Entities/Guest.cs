@@ -23,6 +23,9 @@ namespace HMS.Domain.Entities
         [MaxLength(50)]
         public string Email { get; set; }
 
+        public string ApplicationId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
+
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }

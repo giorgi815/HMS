@@ -28,6 +28,6 @@ namespace HMS.Application.Contracts.Presistence
         void Remove(T entity);
         void Update(T entity);
         void RemoveRange(IEnumerable<T> entities);
-        Task<bool> ExitAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
     }
 }

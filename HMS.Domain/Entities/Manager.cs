@@ -23,6 +23,10 @@ namespace HMS.Domain.Entities
         [MaxLength(9)]
         public string PhoneNumber { get; set; }
 
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
+
+
         [ForeignKey(nameof(Hotel))]
         public int HotelId { get; set; }
         public Hotel Hotel { get; set; }

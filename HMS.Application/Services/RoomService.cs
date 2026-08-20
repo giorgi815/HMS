@@ -23,23 +23,17 @@ namespace HMS.Application.Services
             return MapToPagedResponseDto(rooms, parameters);
         }
 
-        public async Task<RoomForGettingDto> GetRoomByIdAsync(int roomId)
+        public async Task<IEnumerable<RoomForGettingDto>> GetRoomByHotelAsync(int hotelId)
         {
-            if (roomId == null)
-                throw new BadRequestException("Room Id is required");
+            var rooms = await roomRepository.GetAllAsync(filter: r => r.HotelId == hotelId, tracikng: false);
+            var mappedRooms = mapper.Map<IEnumerable<RoomForGettingDto>>(rooms.Items);
 
-            var room = roomRepository.GetAsync(r => r.RoomId == roomId);
-
-            if (room is null)
-                throw new NotFoundException($"Room with Id {roomId} not found");
-
-            return mapper.Map<RoomForGettingDto>(room);
-
+            return mappedRooms;
         }
 
         public async Task<PagedResponseDto<RoomForGettingDto>> SearchAvailableRoomsAsync(RoomSearchRequestDto parameters)
         {
-            Expression<Func<Room, bool>> filter = r => 
+            Expression<Func<Room, bool>> filter = r =>
             (!parameters.MinPrice.HasValue || r.Price >= parameters.MinPrice) &&
             (!parameters.MaxPrice.HasValue || r.Price <= parameters.MaxPrice) &&
             (!parameters.CheckInDate.HasValue || !parameters.CheckOutDate.HasValue ||
@@ -56,7 +50,7 @@ namespace HMS.Application.Services
             );
 
             return MapToPagedResponseDto(rooms, parameters);
-        }   
+        }
 
         public async Task<int> CreateRoomAsync(RoomForCreatingDto model)
         {
@@ -66,7 +60,7 @@ namespace HMS.Application.Services
 
             var hotel = await hotelRepository.GetAsync(h => h.HotelId == model.HotelId);
 
-            if(hotel is null)
+            if (hotel is null)
                 throw new NotFoundException($"Hotel with Id {model.HotelId} not found");
 
             //if room is preserved same room cant be preserved again
@@ -101,8 +95,8 @@ namespace HMS.Application.Services
 
         public async Task DeleteRoomAsync(int roomId)
         {
-            if (roomId == null)
-                throw new BadRequestException("Room Id is required");
+            if (roomId <= 0)
+                throw new BadRequestException("Room Id is required and must be greater than zero");
 
             var room = await roomRepository.GetAsync(r => r.RoomId == roomId);
 
@@ -114,7 +108,7 @@ namespace HMS.Application.Services
             bool hasActiveOrFutureReservations = room.ReservationRooms
             .Any(rr => rr.Reservation.CheckOutDate >= today);
 
-            if(hasActiveOrFutureReservations)
+            if (hasActiveOrFutureReservations)
                 throw new BadRequestException($"Room with Id {roomId} has active or future reservations and cannot be deleted");
 
             roomRepository.Remove(room);

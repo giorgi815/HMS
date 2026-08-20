@@ -6,6 +6,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 
 namespace HMS.Application.Services
@@ -16,6 +17,8 @@ namespace HMS.Application.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IManagerService _managerService;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly IAdminService _adminService;
+        private readonly IGuestService _guestService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
@@ -28,20 +31,25 @@ namespace HMS.Application.Services
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IManagerService managerService,
+            IGuestService guestService,
             IJwtTokenGenerator jwtTokenGenerator,
             IMapper mapper,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IAdminService adminService
+            )
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _managerService = managerService;
+            _guestService = guestService;
             _jwtTokenGenerator = jwtTokenGenerator;
             _mapper = mapper;
             _configuration = configuration;
+            _adminService = adminService;
         }
 
 
-   
+
 
         public async Task<LoginResponseDto> LoginAsync(LoginRequestDto model)
         {
@@ -77,9 +85,9 @@ namespace HMS.Application.Services
 
         public async Task<string> RegisterAdminAsync(AdminRegistrationRequestDto model)
         {
-            ApplicationUser user = _mapper.Map<ApplicationUser>(model);
+            var user = _mapper.Map<ApplicationUser>(model);
 
-            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
             {
@@ -88,14 +96,50 @@ namespace HMS.Application.Services
 
             await AddRoleAsync(user, _adminRole);
 
+            var admin = new Admin
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PersonalNumber = model.PersonalNumber,
+                PhoneNumber = model.PhoneNumber,
+                Email = model.Email,
+                ApplicationUserId = user.Id
+            };
+
+            await _adminService.CreateAdminAsync(admin);
+
             return user.Id;
-            
+
 
         }
 
-        public Task<string> RegisterGuestAsync(GuestRegistrationRequestDto model)
+        public async Task<string> RegisterGuestAsync(GuestRegistrationRequestDto model)
         {
-            throw new NotImplementedException();
+            var user = _mapper.Map<ApplicationUser>(model);
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
+            {
+                throw new BadRequestException(result.Errors.First().Description);
+            }
+
+            await AddRoleAsync(user, _guestRole);
+
+            var guest = new Guest
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PersonalNumber = model.PersonalNumber,
+                PhoneNumber = model.PhoneNumber,
+                Email = model.Email,
+                ApplicationId = user.Id
+            };
+
+            await _guestService.CreateGuestAsync(guest);
+
+            return user.Id;
+
         }
 
         public Task<string> RegisterManagerAsync(ManagerRegistrationRequestDto model)
